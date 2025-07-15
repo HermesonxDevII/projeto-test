@@ -24,31 +24,31 @@
 
     @endphp
 
-    <li x-data="{
-        conversationID: @js($conversation->id),
-        showUnreadStatus: @js(!$isReadByAuth),
-        handleChatOpened(event) {
-            // Hide unread dot
-            if (event.detail.conversation== this.conversationID) {
-                this.showUnreadStatus= false;
-            }
-            //update this so that the the selected conversation highlighter can be updated
-            $wire.selectedConversationId= event.detail.conversation;
-        },
-        handleChatClosed(event) {
+    <li
+        x-data="{
+            conversationID: @js($conversation->id),
+            showUnreadStatus: @js(!$isReadByAuth),
+            handleChatOpened(event) {
+                // Hide unread dot
+                if (event.detail.conversation== this.conversationID) {
+                    this.showUnreadStatus= false;
+                }
+                //update this so that the the selected conversation highlighter can be updated
+                $wire.selectedConversationId= event.detail.conversation;
+            },
+            handleChatClosed(event) {
+                    // Clear the globally selected conversation.
+                    $wire.selectedConversationId = null;
+                    selectedConversationId = null;
+            },
+            handleOpenChat(event) {
                 // Clear the globally selected conversation.
-                $wire.selectedConversationId = null;
-                selectedConversationId = null;
-        },
-        handleOpenChat(event) {
-            // Clear the globally selected conversation.
-            if (this.showUnreadStatus==  event.detail.conversation== this.conversationID) {
-                this.showUnreadStatus= false;
+                if (this.showUnreadStatus==  event.detail.conversation== this.conversationID) {
+                    this.showUnreadStatus= false;
+                }
             }
-    }
-    }"  
-
-    id="conversation-{{ $conversation->id }}" 
+        }"  
+        id="conversation-{{ $conversation->id }}" 
         wire:key="conversation-em-{{ $conversation->id }}-{{ $conversation->updated_at->timestamp }}"
         x-on:chat-opened.window="handleChatOpened($event)"
         x-on:chat-closed.window="handleChatClosed($event)"

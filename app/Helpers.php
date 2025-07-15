@@ -232,3 +232,14 @@ if (!function_exists('getAuthenticatedParticipant')) {
         return null;
     }
 }
+
+if (!function_exists('getReturnURL')) {
+    function getReturnURL(): string
+    {
+        $baseUrl = config('app.plataform_url', 'http://localhost:80/chats');
+
+        $baseUrl = rtrim($baseUrl, '/');
+
+        return $baseUrl;
+    }
+}

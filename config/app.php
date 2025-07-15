@@ -53,6 +53,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'plataform_url' => env('APP_PLATAFORM_URL', 'http://localhost:80/chats'),
 
     /*
     |--------------------------------------------------------------------------

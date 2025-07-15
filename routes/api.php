@@ -6,11 +6,11 @@ use App\Http\Controllers\ChatApiIntegrationController;
 
 Route::prefix('integration-api/chat')->group(function () {
 
-    Route::get('/recent-messages-for-notifications', [ChatApiIntegrationController::class, 'getRecentMessagesForNotifications'])->name('integration.chat.recentMessagesForNotifications');
+    Route::get('/recent-messages-for-notifications/{user}', [ChatApiIntegrationController::class, 'getRecentMessagesForNotifications'])->name('integration.chat.recentMessagesForNotifications');
 
-    Route::post('/{conversation}/mark-as-read', [ChatApiIntegrationController::class, 'markConversationAsRead'])->name('integration.chat.markAsRead');
+    Route::post('/{conversation}/mark-as-read/{user}', [ChatApiIntegrationController::class, 'markConversationAsRead'])->name('integration.chat.markAsRead');
 
-    Route::get('/total-unread-messages', [ChatApiIntegrationController::class, 'getTotalUnreadMessagesCount'])->name('integration.chat.totalUnreadMessagesCount');
+    Route::get('/total-unread-messages/{user}', [ChatApiIntegrationController::class, 'getTotalUnreadMessagesCount'])->name('integration.chat.totalUnreadMessagesCount');
 });
 
 Route::get('/user', function (Request $request) {

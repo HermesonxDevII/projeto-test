@@ -3,25 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{ Auth, Log };
 use Namu\WireChat\Models\{ Conversation, Message, Participant, Group };
+use Namu\WireChat\Enums\ConversationType;
+use App\Models\User;
 use Carbon\Carbon;
 
 class ChatApiIntegrationController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     /**
      * Retorna as mensagens recentes para o usuário autenticado para exibição no dropdown de notificações.
      * Esta API será consumida pela aplicação principal.
      */
-    public function getRecentMessagesForNotifications(Request $request)
+    public function getRecentMessagesForNotifications(Request $request, User $user)
     {
-        $user = Auth::user();
-
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -68,7 +63,7 @@ class ChatApiIntegrationController extends Controller
             }
 
             // Determinar o nome da conversa
-            if ($conversation->type === 'private') {
+            if ($conversation->type === ConversationType::PRIVATE) {
                 $otherParticipant = $conversation->participants->first(function ($p) use ($user) {
                     return $p->participantable_id !== $user->id || $p->participantable_type !== get_class($user);
                 });
@@ -78,7 +73,7 @@ class ChatApiIntegrationController extends Controller
                                         ? ($otherParticipant->participantable->display_name ?? $otherParticipant->participantable->name ?? 'Chat Privado')
                                         : 'Chat Privado';
 
-            } elseif ($conversation->type === 'group' && $conversation->group) {
+            } elseif ($conversation->type === ConversationType::GROUP) {
                 $conversationName = $conversation->group->name;
 
                 // Se a última mensagem for de um usuário específico em um grupo
@@ -91,7 +86,6 @@ class ChatApiIntegrationController extends Controller
 
             // Gerar a URL do chat para a aplicação de chat externa
             $chatUrl = 'http://localhost:81/chats/' . $conversation->id;
-
 
             return [
                 'conversation_id' => $conversation->id,
@@ -111,10 +105,8 @@ class ChatApiIntegrationController extends Controller
      * Marca uma conversa específica como lida para o usuário autenticado.
      * Esta API será consumida pela aplicação principal.
      */
-    public function markConversationAsRead(Conversation $conversation)
+    public function markConversationAsRead(Conversation $conversation, User $user)
     {
-        $user = Auth::user();
-
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
@@ -136,10 +128,8 @@ class ChatApiIntegrationController extends Controller
      * Retorna o total de mensagens não lidas para o usuário autenticado.
      * Usado para o contador global de notificações no ícone do chat.
      */
-    public function getTotalUnreadMessagesCount()
+    public function getTotalUnreadMessagesCount(User $user)
     {
-        $user = Auth::user();
-
         if (!$user) {
             return response()->json(['total_unread' => 0], 200);
         }
