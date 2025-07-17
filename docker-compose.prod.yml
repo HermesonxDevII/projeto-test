@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+    app:
+        container_name: smartlead-app-chat
+        build:
+            context: .
+            dockerfile: ./docker/app/Dockerfile
+        image: smartlead/app
+        restart: always
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+            - "./docker/php/application.ini:/usr/local/etc/php/conf.d/application.ini"
+        depends_on:
+            - redis
+        networks:
+            - smartlead
+            - chat-shared
+        command: bash -c "composer install --no-interaction --prefer-dist --optimize-autoloader && php-fpm"
+
+    nginx:
+        container_name: app-nginx-chat
+        image: nginx:alpine
+        restart: always
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/default/:/etc/nginx/conf.d/
+            #- ./docker/nginx/ssl/:/etc/nginx/conf.d/:ro
+            #- ./certbot/www:/var/www/certbot/:ro
+            #- ./certbot/conf/:/etc/nginx/ssl/:ro
+        networks:
+            - smartlead
+
+    #certbot:
+        #image: certbot/certbot:latest
+       # volumes:
+            #- ./certbot/www/:/var/www/certbot/:rw
+            #- ./certbot/conf/:/etc/letsencrypt/:rw
+        #networks:
+            #- smartlead
+
+    redis:
+        image: redis:latest
+        restart: always
+        networks:
+            - smartlead
+    queue:
+        build:
+            context: .
+            dockerfile: ./docker/app/Dockerfile
+        container_name: smartlead-queue-chat
+        working_dir: /var/www
+        command: php artisan queue:work --queue=messages,default
+        volumes:
+            - ./:/var/www
+        depends_on:
+            - app
+        networks:
+            - smartlead
+            - chat-shared
+
+    reverb:
+        build:
+            context: .
+            dockerfile: ./docker/app/Dockerfile
+        container_name: smartlead-reverb-chat
+        working_dir: /var/www
+        command: ["php", "artisan", "reverb:start"]
+        volumes:
+            - ./:/var/www
+        ports:
+            - 6001:8180
+        depends_on:
+            - app
+        networks:
+            - smartlead
+            - chat-shared
+
+networks:
+    smartlead:
+        driver: bridge
+    chat-shared:
+        external: true
