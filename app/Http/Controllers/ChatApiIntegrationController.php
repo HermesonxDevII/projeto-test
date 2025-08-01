@@ -105,23 +105,23 @@ class ChatApiIntegrationController extends Controller
      * Marca uma conversa específica como lida para o usuário autenticado.
      * Esta API será consumida pela aplicação principal.
      */
-    public function markConversationAsRead(Conversation $conversation, User $user)
+    public function markConversationAsRead(Conversation $conversation, $user)
     {
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+        $participant = null;
+        foreach (config('wirechat.user_model') as $modelClass) {
+            $participant = $modelClass::find($user);
+            if ($participant) {
+                break;
+            }
         }
 
-        $participant = $conversation->participants()->where('participantable_id', $user->id)
-                                    ->where('participantable_type', get_class($user))
-                                    ->first();
-
-        if ($participant) {
-            $participant->conversation_read_at = Carbon::now();
-            $participant->save();
-            return response()->json(['message' => 'Conversation marked as read.']);
+        if (!$participant) {
+            return response()->json(['message' => 'Participant not found.'], 404);
         }
 
-        return response()->json(['message' => 'Participant not found in this conversation.'], 404);
+        $conversation->markAsRead($participant);
+
+        return response()->json(['message' => 'Conversation marked as read.']);
     }
 
     /**

@@ -17,6 +17,7 @@ use Namu\WireChat\Enums\ParticipantRole;
 use Namu\WireChat\Facades\WireChat;
 use App\Models\Scopes\WithoutRemovedMessages;
 use App\Traits\Actionable;
+use App\Models\Student;
 
 class Conversation extends Model
 {
@@ -424,20 +425,19 @@ class Conversation extends Model
         return auth()->user();
     }
 
-    /**
-     * Mark the conversation as read for the current authenticated user.
-     *
-     * @param  Model  $user||null
-     *                             If not user is passed ,it will attempt to user auth(),if not avaible then will return null
-     */
     public function markAsRead(?Model $user = null)
     {
+        if (is_null($user)) {
+            if (auth()->check() && auth()->user()->is_guardian && session()->has('student_id')) {
+                $studentId = session('student_id');
+                $user = Student::find($studentId);
+            } else {
+                $user = auth()->user();
+            }
+        }
 
-        $user = $user ?? auth()->user();
-        if ($user == null) {
-
+        if (is_null($user)) {
             return null;
-            // code...
         }
 
         $this->participant($user)?->update(['conversation_read_at' => now()]);

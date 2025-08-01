@@ -243,3 +243,26 @@ if (!function_exists('getReturnURL')) {
         return $baseUrl;
     }
 }
+
+if (!function_exists('translateDate')) {
+    function translateDate(string $date): string
+    {
+        $dayIndex = [
+            'sunday'    => 'Domingo',
+            'monday'    => 'Segunda-Feira',
+            'tuesday'   => 'Terça-Feira',
+            'wednesday' => 'Quarta-Feira',
+            'thursday'  => 'Quinta-Feira',
+            'friday'    => 'Sexta-Feira',
+            'saturday'  => 'Sábado'
+        ];
+
+        $lowerDate = strtolower($date);
+
+        if (isset($dayIndex[$lowerDate])) {
+            return $dayIndex[$lowerDate];
+        }
+
+        return $date;
+    }
+}

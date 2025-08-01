@@ -92,8 +92,8 @@
 
     @if ($loadedMessages)
         @foreach ($loadedMessages as $date => $messageGroup)
-            <div class="sticky top-0 uppercase p-2 shadow-xs px-2.5 z-50 rounded-xl border border-gray-100/50 text-sm flex text-center justify-center bg-gray-50 w-28 mx-auto ">
-                {{ $date }}
+            <div class="sticky top-0 uppercase p-2 shadow-xs px-2.5 z-50 rounded-xl border border-gray-100/50 text-sm flex text-center justify-center bg-gray-50 w-32 mx-auto ">
+                {{ translateDate($date) }}
             </div>
 
             @foreach ($messageGroup as $key => $message)
