@@ -1,7 +1,12 @@
 
 @use('Namu\WireChat\Facades\WireChat')
 
-<ul wire:loading.delay.long.remove wire:target="search" class="p-2 grid w-full spacey-y-2">
+<script> console.log('livewire/chats/list.blade', @json($conversations)) </script>
+
+<ul
+    wire:loading.delay.long.remove wire:target="search"
+    class="p-2 grid w-full spacey-y-2"
+>
     @foreach ($conversations as $key=> $conversation)
         @php
             $receiver = null;
@@ -27,6 +32,7 @@
 
             $unreadCount = $this->auth ? $conversation->getUnreadCountFor($this->auth) : 0;
         @endphp
+
         <li
             x-data="{
                 conversationID: @js($conversation->id),
@@ -55,23 +61,33 @@
             wire:key="conversation-em-{{ $conversation->id }}-{{ $conversation->updated_at->timestamp }}"
             x-on:chat-opened.window="handleChatOpened($event)"
             x-on:chat-closed.window="handleChatClosed($event)"
-            <a @if ($widget) tabindex="0" 
-            role="button" 
-            dusk="openChatWidgetButton"
-            @click="$dispatch('open-chat',{conversation:'@json($conversation->id)'})"
-            @keydown.enter="$dispatch('open-chat',{conversation:'@json($conversation->id)'})"
-            @else
-            wire:navigate href="{{ route(WireChat::viewRouteName(), $conversation->id) }}" @endif
-                @style(['border-color:var(--wirechat-primary-color)' => $selectedConversationId == $conversation?->id])
-                class="py-3 flex gap-4 hover:bg-gray-50 rounded-xs transition-colors duration-150  relative w-full cursor-pointer px-2"
-                :class="$wire.selectedConversationId == conversationID &&
-                    'bg-gray-50 border-r-4  border-opacity-20 border-[var(--wirechat-primary-color)]'">
-
+            
+            <a 
+                @if($widget)
+                    tabindex="0" 
+                    role="button" 
+                    dusk="openChatWidgetButton"
+                    @click="$dispatch('open-chat',{conversation:'@json($conversation->id)'})"
+                    @keydown.enter="$dispatch('open-chat',{conversation:'@json($conversation->id)'})"
+                @else
+                    wire:navigate
+                    href="{{ route(WireChat::viewRouteName(), $conversation->id) }}"
+                @endif
+                @style([
+                    'border-color:var(--wirechat-primary-color)' => $selectedConversationId == $conversation?->id
+                ])
+                class="py-3 flex gap-4 hover:bg-gray-50 rounded-xs transition-colors duration-150 relative w-full cursor-pointer px-2"
+                :class="
+                    $wire.selectedConversationId == conversationID
+                    && 'bg-gray-50 border-r-4  border-opacity-20 border-[var(--wirechat-primary-color)]'
+                "
+            >
                 <div class="shrink-0">
                     <x-wirechat::avatar
                         disappearing="{{ $conversation->hasDisappearingTurnedOn() }}"
                         group="{{ $conversation->isGroup() }}"
-                        src="{{ $group ? $group?->cover_url : $receiver?->cover_url ?? null }}" class="w-12 h-12"
+                        src="{{ $group ? $group?->cover_url : $receiver?->cover_url ?? null }}"
+                        class="w-12 h-12"
                     />
                 </div>
 
@@ -107,15 +123,12 @@
                                 <span
                                     class="text-white rounded-full h-5 w-5 flex items-center justify-center"
                                     style="background-color: #329FBA;"
-                                >
-                                    {{ $unreadCount }}
-                                </span>
+                                > {{ $unreadCount }} </span>
                             </div>
                         </div>
                     @endif
                 </aside>
             </a>
-
         </li>
     @endforeach
 </ul>

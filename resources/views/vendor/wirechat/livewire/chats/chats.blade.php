@@ -1,17 +1,24 @@
 @use('Namu\WireChat\Facades\WireChat')
 
-<div x-data="{ selectedConversationId: '{{ request()->conversation ?? $selectedConversationId }}' }"
-    x-on:open-chat.window="selectedConversationId= $event.detail.conversation; $wire.selectedConversationId= $event.detail.conversation;"
-    x-init=" setTimeout(() => {
-         conversationElement = document.getElementById('conversation-' + selectedConversationId);
-    
-         // Scroll to the conversation element
-         if (conversationElement) {
-             conversationElement.scrollIntoView({ behavior: 'smooth' });
-         }
-     }, 200);"
-    class="flex flex-col bg-white/95 transition-all h-full overflow-hidden w-full sm:p-3">
+<script> console.log('livewire/chats/chats.blade', @json($conversations)) </script>
 
+<div
+    x-data="{
+        selectedConversationId: '{{ request()->conversation ?? $selectedConversationId }}'
+    }"
+    x-on:open-chat.window="selectedConversationId= $event.detail.conversation; $wire.selectedConversationId= $event.detail.conversation;"
+    x-init="
+        setTimeout(() => {
+            conversationElement = document.getElementById('conversation-' + selectedConversationId);
+    
+            // Scroll to the conversation element
+            if (conversationElement) {
+                conversationElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 200);
+    "
+    class="flex flex-col bg-white/95 transition-all h-full overflow-hidden w-full sm:p-3"
+>
     @php
         /* Show header if any of these conditions are true  */
         $showHeader = $showNewChatModalButton || $allowChatsSearch || $showHomeRouteButton || !empty($title);
@@ -20,7 +27,8 @@
     {{-- include header --}}
     @includeWhen($showHeader, 'wirechat::livewire.chats.partials.header')
 
-    <main x-data
+    <main
+        x-data
         @scroll.self.debounce="
            {{-- Detect when scrolled to the bottom --}}
             // Calculate scroll values
@@ -34,15 +42,14 @@
                 await $nextTick();
                 $wire.loadMore();
             }
-            "
-        class=" overflow-y-auto py-2   grow  h-full relative " style="contain:content">
-
+        "
+        class=" overflow-y-auto py-2   grow  h-full relative "
+        style="contain:content"
+    >
         {{-- loading indicator --}}
-
         @if (count($conversations) > 0)
             {{-- include list item --}}
             @include('wirechat::livewire.chats.partials.list')
-
 
             {{-- include load more if true --}}
             @includeWhen($canLoadMore, 'wirechat::livewire.chats.partials.load-more-button')
@@ -52,7 +59,4 @@
             </div>
         @endif
     </main>
-
-
-
 </div>

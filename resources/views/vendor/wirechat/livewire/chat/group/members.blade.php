@@ -1,10 +1,8 @@
 @php
-       $authIsAdminInGroup=  $participant?->isAdmin();
-       $authIsOwner=  $participant?->isOwner();
-       $isGroup=  $conversation?->isGroup();
-
-    @endphp
-
+    $authIsAdminInGroup=  $participant?->isAdmin();
+    $authIsOwner=  $participant?->isOwner();
+    $isGroup=  $conversation?->isGroup();
+@endphp
 
 <div x-ref="members"
     class="h-[calc(100vh_-_6rem)]  sm:h-[450px] bg-white border overflow-y-auto overflow-x-hidden  ">
@@ -62,16 +60,17 @@
                             class="flex cursor-pointer group gap-2 items-center overflow-x-hidden p-2 py-3">
 
                             <label class="flex cursor-pointer gap-2 items-center w-full">
-                                <x-wirechat::avatar src="{{ $participant->participantable->cover_url }}"
-                                    class="w-10 h-10" />
+                                <x-wirechat::avatar
+                                    src="{{ $participant->participantable?->cover_url }}"
+                                    class="w-10 h-10"
+                                />
 
                                 <div class="grid grid-cols-12 w-full ">
                                     <h6 @class(['transition-all truncate group-hover:underline col-span-10' ])>                                        
-                                        {{-- {{ $loopParticipantIsAuth ? "Você"  : $participant->participantable->display_name }} --}}
                                         @if ($loopParticipantIsAuth)
-                                            Você ({{ $participant->participantable->display_name }})
+                                            Você ({{ $participant->participantable?->display_name }})
                                         @else
-                                            {{ $participant->participantable->display_name }}
+                                            {{ $participant->participantable?->display_name }}
                                         @endif
                                     </h6>
                                         @if ($participant->isOwner()|| $participant->isAdmin())
