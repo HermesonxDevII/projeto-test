@@ -6,6 +6,8 @@
     $primaryColor = WireChat::getColor();
 @endphp
 
+
+
 @assets
     <style>
      
@@ -79,74 +81,53 @@
 
 @endassets
 
-<div
-    x-data="{
-        initializing: true,
-        conversationId:@js($conversation->id),
-        conversationElement: document.getElementById('conversation'),
-        loadEmojiPicker() {
-            if (!document.head.querySelector('script[src=\'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js\']')) {
-                let script = document.createElement('script');
-                script.type = 'module';
-                script.async = true; // Load asynchronously
-                script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
-                document.head.appendChild(script);
-            }
-        },
-        get isWidget() {
-
-            return $wire.widget == true;
+<div x-data="{
+    initializing: true,
+    conversationId:@js($conversation->id),
+    conversationElement: document.getElementById('conversation'),
+    loadEmojiPicker() {
+        if (!document.head.querySelector('script[src=\'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js\']')) {
+            let script = document.createElement('script');
+            script.type = 'module';
+            script.async = true; // Load asynchronously
+            script.src = 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+            document.head.appendChild(script);
         }
-    }"
-    x-init="setTimeout(() => {
-        requestAnimationFrame(() => {
-            initializing = false;
-            $wire.dispatch('focus-input-field');
-            loadEmojiPicker();
-            {{-- if (isWidget) { --}}
-                //NotifyListeners about chat opened
-                $wire.dispatch('chat-opened',{conversation:conversationId});
-            {{-- } --}}
-        });
-    }, 120);"
-    class="w-full transition bg-white/95 overflow-hidden h-full relative"
-    style="contain:content"
->
+    },
+    get isWidget() {
+
+        return $wire.widget == true;
+    }
+}" 
+
+ x-init="setTimeout(() => {
+
+    requestAnimationFrame(() => {
+        initializing = false;
+        $wire.dispatch('focus-input-field');
+        loadEmojiPicker();
+        {{-- if (isWidget) { --}}
+            //NotifyListeners about chat opened
+            $wire.dispatch('chat-opened',{conversation:conversationId});
+        {{-- } --}}
+    });
+}, 120);"
+    class="w-full transition bg-white/95 overflow-hidden h-full relative" style="contain:content">
+
     <div class=" flex flex-col  grow h-full   relative ">
         {{-- ---------- --}}
         {{-- --Header-- --}}
         {{-- ---------- --}}
-        @include('wirechat::livewire.chat.partials.header',
-            [
-                'conversation' => $conversation,
-                'receiver'     => $receiver
-            ]
-        )
+        @include('wirechat::livewire.chat.partials.header', [ 'conversation' => $conversation, 'receiver' => $receiver])
         {{-- ---------- --}}
         {{-- -Body----- --}}
         {{-- ---------- --}}
-        @include('wirechat::livewire.chat.partials.body',
-            [
-                'conversation'    => $conversation,
-                'authParticipant' => $authParticipant,
-                'loadedMessages'  => $loadedMessages,
-                'isPrivate'       => $conversation->isPrivate(),
-                'isGroup'         => $conversation->isGroup(),
-                'receiver'        => $receiver
-            ]
-        )
+        @include('wirechat::livewire.chat.partials.body', [ 'conversation' => $conversation, 'authParticipant' => $authParticipant, 'loadedMessages' => $loadedMessages, 'isPrivate' => $conversation->isPrivate(), 'isGroup' => $conversation->isGroup(), 'receiver' => $receiver])
         {{-- ---------- --}}
         {{-- -Footer--- --}}
         {{-- ---------- --}}
-        @include('wirechat::livewire.chat.partials.footer',
-            [
-                'conversation'    => $conversation,
-                'authParticipant' => $authParticipant,
-                'media'           => $media,
-                'files'           => $files,
-                'replyMessage'    => $replyMessage
-            ]
-        )
+        @include('wirechat::livewire.chat.partials.footer', [ 'conversation' => $conversation, 'authParticipant' => $authParticipant, 'media' => $media, 'files' => $files, 'replyMessage' => $replyMessage])
+
     </div>
 
     <livewire:wirechat.chat.drawer />

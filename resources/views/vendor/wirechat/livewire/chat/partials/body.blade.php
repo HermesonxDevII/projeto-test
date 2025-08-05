@@ -92,9 +92,9 @@
 
     @if ($loadedMessages)
         @foreach ($loadedMessages as $date => $messageGroup)
-            <div
-                class="sticky top-0 uppercase p-2 shadow-xs px-2.5 z-50 rounded-xl border border-gray-100/50 text-sm flex text-center justify-center bg-gray-50 w-32 mx-auto "
-            > {{ translateDate($date) }} </div>
+            <div class="sticky top-0 uppercase p-2 shadow-xs px-2.5 z-50 rounded-xl border border-gray-100/50 text-sm flex text-center justify-center bg-gray-50 w-32 mx-auto ">
+                {{ translateDate($date) }}
+            </div>
 
             @foreach ($messageGroup as $key => $message)
                 @php
@@ -116,10 +116,7 @@
                             'shrink-0 mb-auto -mb-2',
                             'invisible' => $previousMessage && $message?->sendable?->is($previousMessage?->sendable),
                         ])>
-                            <x-wirechat::avatar
-                                src="{{ $message->sendable?->cover_url ?? null }}"
-                                class="h-8 w-8"
-                            />
+                            <x-wirechat::avatar src="{{ $message->sendable?->cover_url ?? null }}" class="h-8 w-8" />
                         </div>
                     @endif
 
@@ -154,15 +151,13 @@
                                                     source="{{ $attachment?->url }}"
                                                 />
                                             @elseif (str()->startsWith($attachment->mime_type, 'image/'))
-                                                @include('wirechat::livewire.chat.partials.image',
-                                                    [
-                                                        'previousMessage' => $previousMessage,
-                                                        'message' => $message,
-                                                        'nextMessage' => $nextMessage,
-                                                        'belongsToAuth' => $belongsToAuth,
-                                                        'attachment' => $attachment
-                                                    ]
-                                                )
+                                                @include('wirechat::livewire.chat.partials.image', [
+                                                    'previousMessage' => $previousMessage,
+                                                    'message' => $message,
+                                                    'nextMessage' => $nextMessage,
+                                                    'belongsToAuth' => $belongsToAuth,
+                                                    'attachment' => $attachment
+                                                ])
                                             @endif
                                         @elseif ($message->body)
                                             {{ $message->body }}

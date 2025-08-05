@@ -5,14 +5,12 @@
     $isNotSameAsPrevious = !$isSameAsPrevious;
 @endphp
 
-<div
-    x-data="{ open: false }"
-    class="relative"
->
+<div x-data="{ open: false }" class="relative">
     <img 
-        @click="$dispatch('open-image', { src: '{{ $attachment?->url }}' })"
-        class="cursor-pointer h-[200px] object-scale-down rounded-xl"
-        src="{{ $attachment?->url }}"
-        alt="Imagem"
-    />
+    @click="$dispatch('open-image', { src: '{{ $attachment?->url }}' })"
+    class="cursor-pointer h-[200px] object-scale-down rounded-xl"
+    src="{{ $attachment?->url }}"
+    alt="Imagem"
+   />
+
 </div>

@@ -1,8 +1,10 @@
 @php
-    $authIsAdminInGroup=  $participant?->isAdmin();
-    $authIsOwner=  $participant?->isOwner();
-    $isGroup=  $conversation?->isGroup();
-@endphp
+       $authIsAdminInGroup=  $participant?->isAdmin();
+       $authIsOwner=  $participant?->isOwner();
+       $isGroup=  $conversation?->isGroup();
+
+    @endphp
+
 
 <div x-ref="members"
     class="h-[calc(100vh_-_6rem)]  sm:h-[450px] bg-white border overflow-y-auto overflow-x-hidden  ">
