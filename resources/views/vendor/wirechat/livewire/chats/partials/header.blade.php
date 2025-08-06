@@ -36,7 +36,7 @@
 
             {{-- Only show if is not widget --}}
             @if ($showHomeRouteButton)
-            <a id="redirect-button" href="{{ getReturnURL() }}" class="flex items-center">                
+            <a id="redirect-button" href="{{ config('wirechat.home_route', '/') }}" class="flex items-center">
 
                 <svg class="bi bi-x-octagon-fill w-8 my-auto h-8 stroke-[0.9] text-gray-500 transition-colors duration-300 hover:text-gray-900"
                     xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">

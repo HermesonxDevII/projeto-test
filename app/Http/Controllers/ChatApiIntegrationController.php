@@ -85,7 +85,7 @@ class ChatApiIntegrationController extends Controller
             }
 
             // Gerar a URL do chat para a aplicação de chat externa
-            $chatUrl = 'http://localhost:81/chats/' . $conversation->id;
+            $chatUrl = getReturnURL() . $conversation->id;
 
             return [
                 'conversation_id' => $conversation->id,

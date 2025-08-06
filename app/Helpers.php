@@ -4,7 +4,19 @@ use App\Services\StudentService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Env;
-use Illuminate\Support\Facades\{Auth, Session, Storage};
+use Illuminate\Support\Facades\{ Auth, Session, Storage };
+
+if (!function_exists('reportError')) {
+    function reportError(string $message, \Throwable $e)
+    {
+        Log::error($message, [
+            'message'   => $e->getMessage(),
+            'line'      => $e->getLine(),
+            'file'      => $e->getFile(),
+            'trace'     => $e->getTraceAsString()
+        ]);
+    }
+}
 
 if (!function_exists('deleteFile')) {
     function deleteFile($filePath, $disk = 'public')
